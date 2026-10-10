@@ -343,3 +343,7 @@ button:focus, button:active, button:focus-visible {
   box-shadow: none;
 }
 button::-moz-focus-inner { border: 0; }
+
+/* O seletor de ordem fica transparente; apenas a opção ativa recebe destaque. */
+.ordem-controles { background: transparent; }
+.ordem-indicador { background: rgba(48, 48, 53, .9); }
