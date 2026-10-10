@@ -597,8 +597,20 @@ menuBotao.addEventListener("click", () => {
   alternarOpcoes(!aberto);
 });
 fecharOpcoes.addEventListener("click", () => alternarOpcoes(false));
+function eventoForaDasOpcoes(event) {
+  return !opcoesPainel.hidden && !opcoesPainel.contains(event.target) && !menuBotao.contains(event.target);
+}
 document.addEventListener("click", event => {
-  if (!opcoesPainel.hidden && !opcoesPainel.contains(event.target) && !menuBotao.contains(event.target)) alternarOpcoes(false);
+  if (eventoForaDasOpcoes(event)) alternarOpcoes(false);
+});
+document.addEventListener("pointerup", event => {
+  if (eventoForaDasOpcoes(event)) alternarOpcoes(false);
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !opcoesPainel.hidden) {
+    alternarOpcoes(false);
+    menuBotao.focus();
+  }
 });
 opcoesPainel.querySelectorAll("a").forEach(link => link.addEventListener("click", () => alternarOpcoes(false)));
 seletor.addEventListener("keydown", event => {
