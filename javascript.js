@@ -1,5 +1,5 @@
 const PASTA_ARQUIVOS = "Files";
-const EXTENSOES_PERMITIDAS = [".zip", ".cpp"];
+const EXTENSOES_PERMITIDAS = [".zip", ".cpp", ".cs"];
 const TEXTOS = {
   "pt-BR": {
     idioma: "Idioma",
@@ -9,6 +9,7 @@ const TEXTOS = {
     baixar: "Baixar",
     dump: "dump", dumps: "dumps",
     versao: "versão", versoes: "versões",
+    data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Tente outro nome de jogo ou versão.",
     erro: "Não foi possível carregar o Module.json. Abra o site pelo endereço publicado (Netlify), não direto do arquivo no celular.",
     aviso: "Este site foi criado pelo Claude (IA da Anthropic), exceto os dumps.",
@@ -22,6 +23,7 @@ const TEXTOS = {
     baixar: "Transferir",
     dump: "dump", dumps: "dumps",
     versao: "versão", versoes: "versões",
+    data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Experimente outro nome de jogo ou versão.",
     erro: "Não foi possível carregar o Module.json. Abra o site pelo endereço publicado (Netlify) e não diretamente do ficheiro no telemóvel.",
     aviso: "Este site foi criado pelo Claude (IA da Anthropic), exceto os dumps.",
@@ -35,6 +37,7 @@ const TEXTOS = {
     baixar: "Download",
     dump: "dump", dumps: "dumps",
     versao: "version", versoes: "versions",
+    data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
     erro: "Couldn't load Module.json. Open the site from its published address (Netlify), not straight from the file on your phone.",
     aviso: "This site was made by Claude (Anthropic's AI), except for the dumps.",
@@ -48,6 +51,7 @@ const TEXTOS = {
     baixar: "Download",
     dump: "dump", dumps: "dumps",
     versao: "version", versoes: "versions",
+    data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
     erro: "Couldn't load Module.json. Open the site from its published address (Netlify), not straight from the file on your mobile.",
     aviso: "This site was made by Claude (Anthropic's AI), except for the dumps.",
@@ -113,59 +117,111 @@ function montarJogos(modulo) {
   const jogos = (modulo && modulo.Games) || [];
   if (Array.isArray(jogos)) {
     return jogos.map(item => {
-      const jogo = String(item.gameName || item.name || item.display || "").trim();
+      const jogo = String(item.gameName || item.name || "").trim();
+      const display = String(item.display || jogo).trim();
       const dumps = Array.isArray(item.Dumps) ? item.Dumps : [];
       const versoes = dumps.map(dump => {
         if (typeof dump === "string") {
-          const file = normalizarArquivo(dump);
-          return file ? { nome: file.replace(/\.(zip|cpp)$/i, ""), arquivo: file } : null;
+          const arquivo = normalizarArquivo(dump);
+          return arquivo ? { nome: arquivo.replace(/\.(zip|cpp|cs)$/i, ""), arquivo, base: arquivo } : null;
         }
-        const arquivo = normalizarArquivo(dump.file || dump.name);
-        const nome = String(dump.display || dump.version || dump.name || "").trim();
-        return arquivo ? { nome: nome.replace(/\.(zip|cpp)$/i, "") || arquivo, arquivo } : null;
-      }).filter(Boolean);
-      return { jogo, versoes };
+        const informado = String(dump.file || "").trim();
+        const arquivo = normalizarArquivo(informado);
+        return {
+          nome: String(dump.version || dump.name || informado).trim(),
+          data: String(dump.date || "").trim(),
+          arquivo: arquivo || "",
+          base: arquivo || informado,
+          maisRecente: dump.IsLatestDump === true,
+          primeiro: dump.IsFirstDump === true
+        };
+      }).filter(item => item && item.base);
+      return { jogo, display, versoes };
     }).filter(item => item.jogo && item.versoes.length);
   }
   return Object.entries(jogos).map(([jogo, versoes]) => ({
     jogo,
+    display: jogo,
     versoes: (Array.isArray(versoes) ? versoes : []).map(valor => {
       const texto = String(valor);
-      const arquivo = normalizarArquivo(texto) || texto + ".zip";
-      return { nome: texto.replace(/\.(zip|cpp)$/i, ""), arquivo };
+      const arquivo = normalizarArquivo(texto);
+      return { nome: texto.replace(/\.(zip|cpp|cs)$/i, ""), arquivo, base: arquivo || texto };
     })
   }));
 }
 
+function caminhoDoArquivo(jogo, arquivo) {
+  const caminho = arquivo.split("/").map(encodeURIComponent).join("/");
+  return PASTA_ARQUIVOS + "/" + encodeURIComponent(jogo) + "/" + caminho;
+}
+
+async function descobrirArquivo(jogo, versao) {
+  if (versao.arquivo) return versao;
+  for (const extensao of EXTENSOES_PERMITIDAS) {
+    const candidato = versao.base + extensao;
+    try {
+      const resposta = await fetch(caminhoDoArquivo(jogo, candidato), { method: "HEAD", cache: "no-cache" });
+      if (resposta.ok) return { ...versao, arquivo: candidato };
+    } catch (e) {}
+  }
+  return null;
+}
+
+async function descobrirArquivos(jogos) {
+  const resultado = [];
+  for (const jogo of jogos) {
+    const versoes = (await Promise.all(jogo.versoes.map(v => descobrirArquivo(jogo.jogo, v)))).filter(Boolean);
+    if (versoes.length) resultado.push({ ...jogo, versoes });
+  }
+  return resultado;
+}
+
 function criarLinha(jogo, versao) {
-  const arquivo = versao.arquivo;
   const li = document.createElement("li");
   li.className = "linha";
-
   const info = document.createElement("div");
   info.className = "info";
   const ver = document.createElement("span");
-  ver.className = "versao"; ver.textContent = versao.nome;
+  ver.className = "versao";
+  ver.textContent = versao.nome;
   info.append(ver);
-
-  const arq = document.createElement("span");
-  arq.className = "arquivo"; arq.textContent = arquivo;
-
+  if (versao.data) {
+    const data = document.createElement("span");
+    data.className = "data";
+    data.textContent = versao.data;
+    info.append(data);
+  }
+  if (versao.maisRecente || versao.primeiro) {
+    const selos = document.createElement("span");
+    selos.className = "selos";
+    if (versao.maisRecente) {
+      const selo = document.createElement("span");
+      selo.className = "selo latest";
+      selo.textContent = t("maisRecente");
+      selos.append(selo);
+    }
+    if (versao.primeiro) {
+      const selo = document.createElement("span");
+      selo.className = "selo first";
+      selo.textContent = t("primeiro");
+      selos.append(selo);
+    }
+    info.append(selos);
+  }
   const baixar = document.createElement("a");
-  baixar.className = "btn"; baixar.textContent = t("baixar");
-  const caminhoArquivo = arquivo.split("/").map(encodeURIComponent).join("/");
-  baixar.href = PASTA_ARQUIVOS + "/" + encodeURIComponent(jogo) + "/" + caminhoArquivo;
-  baixar.setAttribute("download", arquivo);
-
-  li.append(info, arq, baixar);
+  baixar.className = "btn";
+  baixar.textContent = t("baixar");
+  baixar.href = caminhoDoArquivo(jogo, versao.arquivo);
+  baixar.setAttribute("download", versao.arquivo.split("/").pop());
+  li.append(info, baixar);
   return li;
 }
 
-function criarBloco(jogo, versoes) {
+function criarBloco(nomeExibido, jogo, versoes) {
   const sec = document.createElement("section");
   sec.className = "bloco";
   const h = document.createElement("h2");
-  h.textContent = jogo;
+  h.textContent = nomeExibido;
   const n = document.createElement("span");
   n.className = "n";
   n.textContent = versoes.length + " " + (versoes.length === 1 ? t("versao") : t("versoes"));
@@ -185,11 +241,11 @@ function mostrar() {
   const ordenados = [...JOGOS].sort((a, b) => a.jogo.localeCompare(b.jogo, IDIOMA));
   for (const g of ordenados) {
     const versoes = g.versoes
-      .filter(v => (g.jogo + " " + v.nome + " " + v.arquivo).toLowerCase().includes(q))
+      .filter(v => (g.display + " " + v.nome + " " + v.data).toLowerCase().includes(q))
       .sort((a, b) => b.nome.localeCompare(a.nome, undefined, { numeric: true }));
     if (!versoes.length) continue;
     total += versoes.length;
-    blocos.push(criarBloco(g.jogo, versoes));
+    blocos.push(criarBloco(g.display, g.jogo, versoes));
   }
 
   lista.replaceChildren(...blocos);
@@ -225,5 +281,5 @@ aplicarIdioma();
 
 fetch("Module.json", { cache: "no-cache" })
   .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then(m => { JOGOS = montarJogos(m); CARREGOU = true; mostrar(); })
+  .then(async m => { JOGOS = await descobrirArquivos(montarJogos(m)); CARREGOU = true; mostrar(); })
   .catch(() => { FALHOU = true; mostrar(); });

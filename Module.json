@@ -5,8 +5,11 @@
       "display": "Among us",
       "Dumps": [
         {
-          "name": "2026.9.29",
-          "file": "2026.9.29.zip"
+          "IsLatestDump": true,
+          "IsFirstDump": true,
+          "date": "10/10/2026",
+          "version": "v2026.9.29",
+          "file": "2026.9.29"
         }
       ]
     }
