@@ -1,7 +1,14 @@
 {
-  "Games": {
-    "Among-us": [
-      "2026.9.29"
-    ]
-  }
+  "Games": [
+    {
+      "gameName": "Among-us",
+      "display": "Among-us",
+      "Dumps": [
+        {
+          "name": "2026.9.29",
+          "file": "2026.9.29.zip"
+        }
+      ]
+    }
+  ]
 }

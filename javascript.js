@@ -1,5 +1,5 @@
 const PASTA_ARQUIVOS = "Files";
-const EXTENSAO = ".zip";
+const EXTENSOES_PERMITIDAS = [".zip", ".cpp"];
 const TEXTOS = {
   "pt-BR": {
     idioma: "Idioma",
@@ -101,24 +101,53 @@ const contagem = document.getElementById("n");
 const seletor = document.getElementById("idioma");
 
 let JOGOS = [];
+let CARREGOU = false;
 let FALHOU = false;
+
+function normalizarArquivo(nome) {
+  const arquivo = String(nome || "").trim();
+  return EXTENSOES_PERMITIDAS.some(ext => arquivo.toLowerCase().endsWith(ext)) ? arquivo : "";
+}
+
 function montarJogos(modulo) {
-  const jogos = (modulo && modulo.Games) || {};
+  const jogos = (modulo && modulo.Games) || [];
+  if (Array.isArray(jogos)) {
+    return jogos.map(item => {
+      const jogo = String(item.gameName || item.name || item.display || "").trim();
+      const dumps = Array.isArray(item.Dumps) ? item.Dumps : [];
+      const versoes = dumps.map(dump => {
+        if (typeof dump === "string") {
+          const file = normalizarArquivo(dump);
+          return file ? { nome: file.replace(/\.(zip|cpp)$/i, ""), arquivo: file } : null;
+        }
+        const arquivo = normalizarArquivo(dump.file || dump.name);
+        const nome = String(dump.display || dump.version || dump.name || "").trim();
+        return arquivo ? { nome: nome.replace(/\.(zip|cpp)$/i, "") || arquivo, arquivo } : null;
+      }).filter(Boolean);
+      return { jogo, versoes };
+    }).filter(item => item.jogo && item.versoes.length);
+  }
+
+  // Compatibilidade com o formato antigo: { "Games": { "Jogo": ["versao"] } }.
   return Object.entries(jogos).map(([jogo, versoes]) => ({
     jogo,
-    versoes: Array.isArray(versoes) ? versoes.map(String) : []
+    versoes: (Array.isArray(versoes) ? versoes : []).map(valor => {
+      const texto = String(valor);
+      const arquivo = normalizarArquivo(texto) || texto + ".zip";
+      return { nome: texto.replace(/\.(zip|cpp)$/i, ""), arquivo };
+    })
   }));
 }
 
 function criarLinha(jogo, versao) {
-  const arquivo = versao + EXTENSAO;
+  const arquivo = versao.arquivo;
   const li = document.createElement("li");
   li.className = "linha";
 
   const info = document.createElement("div");
   info.className = "info";
   const ver = document.createElement("span");
-  ver.className = "versao"; ver.textContent = versao;
+  ver.className = "versao"; ver.textContent = versao.nome;
   info.append(ver);
 
   const arq = document.createElement("span");
@@ -126,7 +155,8 @@ function criarLinha(jogo, versao) {
 
   const baixar = document.createElement("a");
   baixar.className = "btn"; baixar.textContent = t("baixar");
-  baixar.href = PASTA_ARQUIVOS + "/" + encodeURIComponent(jogo) + "/" + encodeURIComponent(versao) + EXTENSAO;
+  const caminhoArquivo = arquivo.split("/").map(encodeURIComponent).join("/");
+  baixar.href = PASTA_ARQUIVOS + "/" + encodeURIComponent(jogo) + "/" + caminhoArquivo;
   baixar.setAttribute("download", arquivo);
 
   li.append(info, arq, baixar);
@@ -157,8 +187,8 @@ function mostrar() {
   const ordenados = [...JOGOS].sort((a, b) => a.jogo.localeCompare(b.jogo, IDIOMA));
   for (const g of ordenados) {
     const versoes = g.versoes
-      .filter(v => (g.jogo + " " + v).toLowerCase().includes(q))
-      .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+      .filter(v => (g.jogo + " " + v.nome + " " + v.arquivo).toLowerCase().includes(q))
+      .sort((a, b) => b.nome.localeCompare(a.nome, undefined, { numeric: true }));
     if (!versoes.length) continue;
     total += versoes.length;
     blocos.push(criarBloco(g.jogo, versoes));
