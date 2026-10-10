@@ -3,7 +3,6 @@ import { join, relative, sep } from "node:path";
 
 const root = "Files";
 const allowed = new Set([".zip", ".cpp"]);
-
 async function listarArquivos(dir) {
   const entradas = await readdir(dir, { withFileTypes: true });
   const arquivos = [];
