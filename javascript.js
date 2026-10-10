@@ -109,6 +109,75 @@ function t(chave) {
   return TEXTOS[ALIAS[IDIOMA] || IDIOMA][chave];
 }
 
+const redeCanvas = document.getElementById("rede-canvas");
+const redeContexto = redeCanvas.getContext("2d");
+let redePontos = [];
+let redeLargura = 0;
+let redeAltura = 0;
+let redeDpr = 1;
+
+function prepararRede() {
+  redeDpr = Math.min(window.devicePixelRatio || 1, 2);
+  redeLargura = window.innerWidth;
+  redeAltura = window.innerHeight;
+  redeCanvas.width = Math.round(redeLargura * redeDpr);
+  redeCanvas.height = Math.round(redeAltura * redeDpr);
+  redeCanvas.style.width = redeLargura + "px";
+  redeCanvas.style.height = redeAltura + "px";
+  redeContexto.setTransform(redeDpr, 0, 0, redeDpr, 0, 0);
+  const quantidade = redeLargura < 600 ? 25 : Math.min(48, Math.round(redeLargura / 24));
+  redePontos = Array.from({ length: quantidade }, () => ({
+    x: Math.random() * redeLargura,
+    y: Math.random() * redeAltura,
+    vx: (Math.random() - .5) * .22,
+    vy: (Math.random() - .5) * .22,
+    raio: 1.1 + Math.random() * 1.3,
+    brilho: Math.random() * Math.PI * 2
+  }));
+}
+
+function desenharRede() {
+  redeContexto.clearRect(0, 0, redeLargura, redeAltura);
+  const distanciaMaxima = redeLargura < 600 ? 104 : 128;
+  for (const ponto of redePontos) {
+    ponto.x += ponto.vx;
+    ponto.y += ponto.vy;
+    ponto.brilho += .018;
+    if (ponto.x < -12 || ponto.x > redeLargura + 12) ponto.vx *= -1;
+    if (ponto.y < -12 || ponto.y > redeAltura + 12) ponto.vy *= -1;
+  }
+  for (let i = 0; i < redePontos.length; i += 1) {
+    for (let j = i + 1; j < redePontos.length; j += 1) {
+      const a = redePontos[i];
+      const b = redePontos[j];
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const distancia = Math.hypot(dx, dy);
+      if (distancia < distanciaMaxima) {
+        const opacidade = (1 - distancia / distanciaMaxima) * .34;
+        redeContexto.strokeStyle = `rgba(225, 234, 255, ${opacidade})`;
+        redeContexto.lineWidth = .7;
+        redeContexto.beginPath();
+        redeContexto.moveTo(a.x, a.y);
+        redeContexto.lineTo(b.x, b.y);
+        redeContexto.stroke();
+      }
+    }
+  }
+  for (const ponto of redePontos) {
+    const brilho = .62 + Math.sin(ponto.brilho) * .2;
+    redeContexto.fillStyle = `rgba(255, 255, 255, ${brilho})`;
+    redeContexto.beginPath();
+    redeContexto.arc(ponto.x, ponto.y, ponto.raio, 0, Math.PI * 2);
+    redeContexto.fill();
+  }
+  window.requestAnimationFrame(desenharRede);
+}
+
+prepararRede();
+window.addEventListener("resize", prepararRede, { passive: true });
+desenharRede();
+
 const lista = document.getElementById("lista");
 const vazio = document.getElementById("vazio");
 const erro = document.getElementById("erro");
