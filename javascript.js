@@ -234,8 +234,13 @@ function criarLinha(jogo, versao) {
 function criarBloco(nomeExibido, jogo, versoes) {
   const sec = document.createElement("section");
   sec.className = "bloco";
+  sec.id = jogo;
   const h = document.createElement("h2");
-  h.textContent = `#${jogo} (${nomeExibido})`;
+  const link = document.createElement("a");
+  link.className = "jogo-link";
+  link.href = `#${encodeURIComponent(jogo)}`;
+  link.textContent = `#${jogo}`;
+  h.append(link, document.createTextNode(` (${nomeExibido})`));
   const n = document.createElement("span");
   n.className = "n";
   n.textContent = versoes.length + " " + (versoes.length === 1 ? t("versao") : t("versoes"));
