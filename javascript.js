@@ -235,7 +235,7 @@ function criarBloco(nomeExibido, jogo, versoes) {
   const sec = document.createElement("section");
   sec.className = "bloco";
   const h = document.createElement("h2");
-  h.textContent = nomeExibido;
+  h.textContent = `#${jogo} (${nomeExibido})`;
   const n = document.createElement("span");
   n.className = "n";
   n.textContent = versoes.length + " " + (versoes.length === 1 ? t("versao") : t("versoes"));
