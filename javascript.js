@@ -10,7 +10,7 @@ const TEXTOS = {
     busca: "Buscar jogo ou versão",
     baixar: "Baixar",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogosMaisRecentes: "Jogo mais recente ao mais antigo", jogosMaisAntigos: "Jogo mais antigo ao mais recente", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Tente outro nome de jogo ou versão.",
@@ -27,7 +27,7 @@ const TEXTOS = {
     busca: "Procurar jogo ou versão",
     baixar: "Transferir",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogosMaisRecentes: "Jogo mais recente ao mais antigo", jogosMaisAntigos: "Jogo mais antigo ao mais recente", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Experimente outro nome de jogo ou versão.",
@@ -44,7 +44,7 @@ const TEXTOS = {
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogosMaisRecentes: "Newest game to oldest", jogosMaisAntigos: "Oldest game to newest", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -61,7 +61,7 @@ const TEXTOS = {
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogosMaisRecentes: "Newest game to oldest", jogosMaisAntigos: "Oldest game to newest", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -454,6 +454,8 @@ function aplicarIdioma() {
   document.getElementById("rotulo-idioma").textContent = t("idioma");
   campo.placeholder = t("busca");
   campo.setAttribute("aria-label", t("busca"));
+  ordemNovo.textContent = t("jogosMaisRecentes");
+  ordemAntigo.textContent = t("jogosMaisAntigos");
   seletor.textContent = `${IDIOMA} · ${NOMES[IDIOMA]}`;
   menuIdiomas.querySelectorAll(".idioma-opcao").forEach(opcao => {
     const ativo = opcao.dataset.codigo === IDIOMA;
