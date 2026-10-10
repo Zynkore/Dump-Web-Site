@@ -176,6 +176,20 @@ async function descobrirArquivos(jogos) {
   return resultado;
 }
 
+function valorDaData(data) {
+  const partes = String(data || "").split("/").map(Number);
+  if (partes.length !== 3 || partes.some(Number.isNaN)) return 0;
+  const [dia, mes, ano] = partes;
+  return new Date(ano, mes - 1, dia).getTime();
+}
+
+function compararMaisRecente(a, b) {
+  const porData = valorDaData(b.data) - valorDaData(a.data);
+  if (porData) return porData;
+  if (a.maisRecente !== b.maisRecente) return a.maisRecente ? -1 : 1;
+  return b.nome.localeCompare(a.nome, undefined, { numeric: true, sensitivity: "base" });
+}
+
 function criarLinha(jogo, versao) {
   const li = document.createElement("li");
   li.className = "linha";
@@ -242,7 +256,7 @@ function mostrar() {
   for (const g of ordenados) {
     const versoes = g.versoes
       .filter(v => (g.display + " " + v.nome + " " + v.data).toLowerCase().includes(q))
-      .sort((a, b) => b.nome.localeCompare(a.nome, undefined, { numeric: true }));
+      .sort(compararMaisRecente);
     if (!versoes.length) continue;
     total += versoes.length;
     blocos.push(criarBloco(g.display, g.jogo, versoes));
