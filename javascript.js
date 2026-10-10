@@ -3,13 +3,14 @@ const EXTENSOES_PERMITIDAS = [".zip", ".cpp", ".cs"];
 const TEXTOS = {
   "pt-BR": {
     idioma: "Idioma",
-    titulo: "Dumps de jogos",
+    titulo: "Dumps",
     games: "Games",
     subGames: "best dumps · fast download",
-    sub: "Arquivos de dump organizados por jogo e versão. Busque o jogo e toque em Baixar.",
+    sub: "Arquivos organizados por jogo e versão. Busque o jogo e toque em Baixar.",
     busca: "Buscar jogo ou versão",
     baixar: "Baixar",
     dump: "dump", dumps: "dumps",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Tente outro nome de jogo ou versão.",
@@ -19,13 +20,14 @@ const TEXTOS = {
   },
   "pt-PT": {
     idioma: "Idioma",
-    titulo: "Dumps de jogos",
+    titulo: "Dumps",
     games: "Games",
     subGames: "best dumps · fast download",
-    sub: "Ficheiros de dump organizados por jogo e versão. Procure o jogo e toque em Transferir.",
+    sub: "Ficheiros organizados por jogo e versão. Procure o jogo e toque em Transferir.",
     busca: "Procurar jogo ou versão",
     baixar: "Transferir",
     dump: "dump", dumps: "dumps",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Experimente outro nome de jogo ou versão.",
@@ -35,13 +37,14 @@ const TEXTOS = {
   },
   "en-US": {
     idioma: "Language",
-    titulo: "Game dumps",
+    titulo: "Dumps",
     games: "Games",
     subGames: "best dumps · fast download",
-    sub: "Dump files organized by game and version. Search for a game and tap Download.",
+    sub: "Files organized by game and version. Search for a game and tap Download.",
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -51,13 +54,14 @@ const TEXTOS = {
   },
   "en-GB": {
     idioma: "Language",
-    titulo: "Game dumps",
+    titulo: "Dumps",
     games: "Games",
     subGames: "best dumps · fast download",
-    sub: "Dump files organised by game and version. Search for a game and tap Download.",
+    sub: "Files organised by game and version. Search for a game and tap Download.",
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -113,6 +117,12 @@ const contagem = document.getElementById("n");
 const seletor = document.getElementById("idioma-botao");
 const menuIdiomas = document.getElementById("idioma-menu");
 const seletorContainer = document.querySelector(".idioma-picker");
+const listaBotao = document.getElementById("lista-botao");
+const ordemControles = document.getElementById("ordem-controles");
+const ordemNovo = document.getElementById("ordem-novo");
+const ordemAntigo = document.getElementById("ordem-antigo");
+let LISTA_ABERTA = false;
+let ORDEM = "novo";
 
 let JOGOS = [];
 let CARREGOU = false;
@@ -262,25 +272,66 @@ function criarBloco(nomeExibido, jogo, versoes) {
   return sec;
 }
 
+function criarTabela(registros) {
+  const tabela = document.createElement("table");
+  tabela.className = "dumps-tabela";
+  const cabecalho = document.createElement("thead");
+  const cabecalhoLinha = document.createElement("tr");
+  for (const texto of [t("jogo"), t("versao"), t("dataTabela"), ""]) {
+    const celula = document.createElement("th");
+    celula.scope = "col";
+    celula.textContent = texto;
+    cabecalhoLinha.append(celula);
+  }
+  cabecalho.append(cabecalhoLinha);
+  const corpo = document.createElement("tbody");
+  for (const registro of registros) {
+    const linha = document.createElement("tr");
+    const jogo = document.createElement("td");
+    jogo.textContent = `#${registro.jogo} (${registro.display})`;
+    const versao = document.createElement("td");
+    versao.textContent = registro.dump.nome;
+    const data = document.createElement("td");
+    data.textContent = registro.dump.data || "—";
+    const acao = document.createElement("td");
+    const baixar = document.createElement("a");
+    baixar.className = "btn tabela-btn";
+    baixar.textContent = t("baixar");
+    baixar.href = caminhoDoArquivo(registro.jogo, registro.dump.arquivo);
+    baixar.setAttribute("download", registro.dump.arquivo.split("/").pop());
+    acao.append(baixar);
+    linha.append(jogo, versao, data, acao);
+    corpo.append(linha);
+  }
+  tabela.append(cabecalho, corpo);
+  return tabela;
+}
+
 function mostrar() {
   const q = campo.value.trim().toLowerCase();
-  const blocos = [];
-  let total = 0;
-
-  const ordenados = [...JOGOS].sort((a, b) => a.jogo.localeCompare(b.jogo, IDIOMA));
-  for (const g of ordenados) {
-    const versoes = g.versoes
-      .filter(v => (g.display + " " + v.nome + " " + v.data).toLowerCase().includes(q))
-      .sort(compararMaisRecente);
-    if (!versoes.length) continue;
-    total += versoes.length;
-    blocos.push(criarBloco(g.display, g.jogo, versoes));
+  const registros = [];
+  for (const g of JOGOS) {
+    for (const dump of g.versoes) {
+      const texto = (g.jogo + " " + g.display + " " + dump.nome + " " + dump.data).toLowerCase();
+      if (texto.includes(q)) registros.push({ jogo: g.jogo, display: g.display, dump });
+    }
   }
+  registros.sort((a, b) => ORDEM === "novo"
+    ? compararMaisRecente(a.dump, b.dump)
+    : compararMaisRecente(b.dump, a.dump));
 
-  lista.replaceChildren(...blocos);
-  vazio.hidden = !CARREGOU || blocos.length > 0;
+  lista.replaceChildren(...(LISTA_ABERTA && registros.length ? [criarTabela(registros)] : []));
+  lista.hidden = !LISTA_ABERTA;
+  ordemControles.hidden = !LISTA_ABERTA;
+  listaBotao.textContent = LISTA_ABERTA ? t("ocultarLista") : t("verLista");
+  listaBotao.setAttribute("aria-expanded", String(LISTA_ABERTA));
+  ordemNovo.textContent = t("maisNovos");
+  ordemAntigo.textContent = t("maisAntigos");
+  ordemNovo.classList.toggle("ativo", ORDEM === "novo");
+  ordemAntigo.classList.toggle("ativo", ORDEM === "antigo");
+  vazio.hidden = !CARREGOU || !LISTA_ABERTA || registros.length > 0;
   erro.hidden = !FALHOU;
-  contagem.textContent = CARREGOU ? total + " " + (total === 1 ? t("dump") : t("dumps")) : "";
+  contagem.textContent = CARREGOU ? registros.length + " " + (registros.length === 1 ? t("dump") : t("dumps")) : "";
 }
 
 function aplicarIdioma() {
@@ -329,6 +380,13 @@ seletor.addEventListener("click", () => {
   if (menuIdiomas.hidden) abrirMenuIdiomas();
   else fecharMenuIdiomas();
 });
+
+listaBotao.addEventListener("click", () => {
+  LISTA_ABERTA = !LISTA_ABERTA;
+  mostrar();
+});
+ordemNovo.addEventListener("click", () => { ORDEM = "novo"; mostrar(); });
+ordemAntigo.addEventListener("click", () => { ORDEM = "antigo"; mostrar(); });
 
 const menuBotao = document.getElementById("menu-botao");
 menuBotao.addEventListener("click", () => {

@@ -10,9 +10,7 @@
 <body>
 <div class="wrap">
   <header class="app-header">
-    <button id="menu-botao" class="menu-botao" type="button" aria-label="Menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+    <button id="menu-botao" class="menu-botao" type="button" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     <div class="marca">Dumps</div>
     <div class="header-spacer"></div>
     <div class="topo">
@@ -26,23 +24,28 @@
 
   <main>
     <section class="hero">
-      <div class="status"><span class="status-dot"></span><span>Dumps · Online</span></div>
-      <h1 data-i18n="titulo">Dumps de jogos</h1>
-      <p class="sub" data-i18n="sub">Arquivos de dump organizados por jogo e versão.</p>
+      <h1 data-i18n="titulo">Dumps</h1>
+      <p class="sub" data-i18n="sub">Arquivos organizados por jogo e versão.</p>
       <div class="busca">
         <span class="busca-icon" aria-hidden="true"></span>
         <input id="q" type="search" autocomplete="off">
         <span id="n" class="contagem"></span>
       </div>
+      <div class="lista-acoes">
+        <button id="lista-botao" class="lista-botao" type="button" aria-expanded="false" aria-controls="lista"></button>
+        <div id="ordem-controles" class="ordem-controles" hidden>
+          <button id="ordem-novo" class="ordem-botao ativo" type="button"></button>
+          <button id="ordem-antigo" class="ordem-botao" type="button"></button>
+        </div>
+      </div>
     </section>
 
     <section class="games-section" aria-labelledby="games-title">
       <div class="section-heading">
-        <h2 id="games-title" data-i18n="games">Games</h2>
+        <h2 id="games-title" data-i18n="listaTitulo">Lista de dumps</h2>
         <span class="heading-line"></span>
-        <p data-i18n="subGames">best dumps · fast download</p>
       </div>
-      <div id="lista"></div>
+      <div id="lista" hidden></div>
     </section>
 
     <div id="vazio" class="vazio" data-i18n="vazio" hidden></div>
