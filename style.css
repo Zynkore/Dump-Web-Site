@@ -303,3 +303,20 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   .ordem-indicador, .ordem-botao { transition: none; }
 }
+
+/* Evita o destaque azul padrão ao clicar nos controles. */
+.ordem-botao:focus, .ordem-botao:focus-visible,
+.baixar-todos:focus, .baixar-todos:focus-visible,
+.bit-botao:focus, .bit-botao:focus-visible,
+.voltar-botao:focus, .voltar-botao:focus-visible { outline: none; box-shadow: none; }
+
+/* Entrada suave ao alternar entre a home e a aba personalizada. */
+@keyframes entrada-tela { from { opacity: 0; transform: translateY(12px) scale(.992); } to { opacity: 1; transform: translateY(0) scale(1); } }
+main:not([hidden]), .jogo-view:not([hidden]) { animation: entrada-tela 420ms cubic-bezier(.2,.75,.25,1) both; }
+.jogo-card, .dump-card { animation: entrada-tela 480ms cubic-bezier(.2,.75,.25,1) both; }
+.jogo-card:nth-child(2), .dump-card:nth-child(2) { animation-delay: 55ms; }
+.jogo-card:nth-child(3), .dump-card:nth-child(3) { animation-delay: 100ms; }
+.jogo-card:nth-child(4), .dump-card:nth-child(4) { animation-delay: 145ms; }
+@media (prefers-reduced-motion: reduce) {
+  main:not([hidden]), .jogo-view:not([hidden]), .jogo-card, .dump-card { animation: none; }
+}
