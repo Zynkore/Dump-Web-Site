@@ -280,3 +280,9 @@ body::after {
   .jogo-card { min-height: 142px; padding: 19px; }
   .jogo-card-cabecalho { align-items: flex-start; flex-direction: column; gap: 5px; }
 }
+
+#ordem-controles { width: 100%; }
+#ordem-controles .ordem-botao { flex: 1; text-align: center; white-space: normal; }
+@media (max-width: 560px) {
+  #ordem-controles .ordem-botao { padding: 7px 5px; font-size: .68rem; line-height: 1.25; }
+}
