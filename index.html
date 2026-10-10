@@ -9,25 +9,45 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="topo">
-    <span id="rotulo-idioma" class="rotulo-idioma"></span>
-    <div class="idioma-picker">
-      <button id="idioma-botao" class="idioma-botao" type="button" aria-haspopup="listbox" aria-expanded="false"></button>
-      <div id="idioma-menu" class="idioma-menu" role="listbox" hidden></div>
+  <header class="app-header">
+    <button id="menu-botao" class="menu-botao" type="button" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="marca">Dumps</div>
+    <div class="header-spacer"></div>
+    <div class="topo">
+      <span id="rotulo-idioma" class="rotulo-idioma"></span>
+      <div class="idioma-picker">
+        <button id="idioma-botao" class="idioma-botao" type="button" aria-haspopup="listbox" aria-expanded="false"></button>
+        <div id="idioma-menu" class="idioma-menu" role="listbox" hidden></div>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <h1 data-i18n="titulo"></h1>
-  <p class="sub" data-i18n="sub"></p>
+  <main>
+    <section class="hero">
+      <div class="status"><span class="status-dot"></span><span>Dumps · Online</span></div>
+      <h1 data-i18n="titulo">Dumps de jogos</h1>
+      <p class="sub" data-i18n="sub">Arquivos de dump organizados por jogo e versão.</p>
+      <div class="busca">
+        <span class="busca-icon" aria-hidden="true"></span>
+        <input id="q" type="search" autocomplete="off">
+        <span id="n" class="contagem"></span>
+      </div>
+    </section>
 
-  <div class="busca">
-    <input id="q" type="search" autocomplete="off">
-    <span id="n" class="contagem"></span>
-  </div>
+    <section class="games-section" aria-labelledby="games-title">
+      <div class="section-heading">
+        <h2 id="games-title" data-i18n="games">Games</h2>
+        <span class="heading-line"></span>
+        <p data-i18n="subGames">best dumps · fast download</p>
+      </div>
+      <div id="lista"></div>
+    </section>
 
-  <div id="lista"></div>
-  <div id="vazio" class="vazio" data-i18n="vazio" hidden></div>
-  <div id="erro" class="vazio" data-i18n="erro" hidden></div>
+    <div id="vazio" class="vazio" data-i18n="vazio" hidden></div>
+    <div id="erro" class="vazio" data-i18n="erro" hidden></div>
+  </main>
 
   <footer>
     <p data-i18n="aviso"></p>

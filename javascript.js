@@ -4,6 +4,8 @@ const TEXTOS = {
   "pt-BR": {
     idioma: "Idioma",
     titulo: "Dumps de jogos",
+    games: "Games",
+    subGames: "best dumps · fast download",
     sub: "Arquivos de dump organizados por jogo e versão. Busque o jogo e toque em Baixar.",
     busca: "Buscar jogo ou versão",
     baixar: "Baixar",
@@ -18,6 +20,8 @@ const TEXTOS = {
   "pt-PT": {
     idioma: "Idioma",
     titulo: "Dumps de jogos",
+    games: "Games",
+    subGames: "best dumps · fast download",
     sub: "Ficheiros de dump organizados por jogo e versão. Procure o jogo e toque em Transferir.",
     busca: "Procurar jogo ou versão",
     baixar: "Transferir",
@@ -32,6 +36,8 @@ const TEXTOS = {
   "en-US": {
     idioma: "Language",
     titulo: "Game dumps",
+    games: "Games",
+    subGames: "best dumps · fast download",
     sub: "Dump files organized by game and version. Search for a game and tap Download.",
     busca: "Search game or version",
     baixar: "Download",
@@ -46,6 +52,8 @@ const TEXTOS = {
   "en-GB": {
     idioma: "Language",
     titulo: "Game dumps",
+    games: "Games",
+    subGames: "best dumps · fast download",
     sub: "Dump files organised by game and version. Search for a game and tap Download.",
     busca: "Search game or version",
     baixar: "Download",
@@ -320,6 +328,14 @@ for (const [codigo, nome] of Object.entries(NOMES)) {
 seletor.addEventListener("click", () => {
   if (menuIdiomas.hidden) abrirMenuIdiomas();
   else fecharMenuIdiomas();
+});
+
+const menuBotao = document.getElementById("menu-botao");
+menuBotao.addEventListener("click", () => {
+  const aberto = menuBotao.getAttribute("aria-expanded") === "true";
+  menuBotao.setAttribute("aria-expanded", String(!aberto));
+  menuBotao.classList.toggle("aberto", !aberto);
+  if (!aberto) campo.focus();
 });
 seletor.addEventListener("keydown", event => {
   if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
