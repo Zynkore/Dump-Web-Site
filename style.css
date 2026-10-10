@@ -199,3 +199,6 @@ body::after {
   .dumps-tabela th, .dumps-tabela td { padding: 12px 8px; }
   .tabela-btn { min-width: 0; padding: 8px 7px; font-size: .72rem; }
 }
+
+.tabela-jogo-link { color: var(--ink); font-weight: 750; text-decoration: none; }
+.tabela-jogo-link:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }

@@ -117,12 +117,11 @@ const contagem = document.getElementById("n");
 const seletor = document.getElementById("idioma-botao");
 const menuIdiomas = document.getElementById("idioma-menu");
 const seletorContainer = document.querySelector(".idioma-picker");
-const listaBotao = document.getElementById("lista-botao");
 const ordemControles = document.getElementById("ordem-controles");
 const ordemNovo = document.getElementById("ordem-novo");
 const ordemAntigo = document.getElementById("ordem-antigo");
-let LISTA_ABERTA = false;
 let ORDEM = "novo";
+let JOGO_DA_ROTA = "";
 
 let JOGOS = [];
 let CARREGOU = false;
@@ -272,6 +271,21 @@ function criarBloco(nomeExibido, jogo, versoes) {
   return sec;
 }
 
+function lerRota() {
+  const partes = decodeURIComponent(location.hash.slice(1)).split("/");
+  JOGO_DA_ROTA = partes[0] && partes[0].toLowerCase() !== "dump-list" ? partes[0] : "";
+  ORDEM = partes.some(parte => parte.toLowerCase() === "id=b-a") ? "antigo" : "novo";
+}
+
+function atualizarRota(ordem = ORDEM) {
+  const jogo = JOGO_DA_ROTA ? encodeURIComponent(JOGO_DA_ROTA) : "";
+  const id = ordem === "antigo" ? "b-a" : "a-b";
+  const rota = jogo ? `#${jogo}/Dump-list/Id=${id}` : `#Dump-list/Id=${id}`;
+  if (location.hash !== rota) history.pushState(null, "", rota);
+  lerRota();
+  mostrar();
+}
+
 function criarTabela(registros) {
   const tabela = document.createElement("table");
   tabela.className = "dumps-tabela";
@@ -288,7 +302,11 @@ function criarTabela(registros) {
   for (const registro of registros) {
     const linha = document.createElement("tr");
     const jogo = document.createElement("td");
-    jogo.textContent = `#${registro.jogo} (${registro.display})`;
+    const jogoLink = document.createElement("a");
+    jogoLink.className = "tabela-jogo-link";
+    jogoLink.href = `#${encodeURIComponent(registro.jogo)}/Dump-list/Id=${ORDEM === "antigo" ? "b-a" : "a-b"}`;
+    jogoLink.textContent = `#${registro.jogo} (${registro.display})`;
+    jogo.append(jogoLink);
     const versao = document.createElement("td");
     versao.textContent = registro.dump.nome;
     const data = document.createElement("td");
@@ -311,6 +329,7 @@ function mostrar() {
   const q = campo.value.trim().toLowerCase();
   const registros = [];
   for (const g of JOGOS) {
+    if (JOGO_DA_ROTA && g.jogo !== JOGO_DA_ROTA) continue;
     for (const dump of g.versoes) {
       const texto = (g.jogo + " " + g.display + " " + dump.nome + " " + dump.data).toLowerCase();
       if (texto.includes(q)) registros.push({ jogo: g.jogo, display: g.display, dump });
@@ -320,16 +339,12 @@ function mostrar() {
     ? compararMaisRecente(a.dump, b.dump)
     : compararMaisRecente(b.dump, a.dump));
 
-  lista.replaceChildren(...(LISTA_ABERTA && registros.length ? [criarTabela(registros)] : []));
-  lista.hidden = !LISTA_ABERTA;
-  ordemControles.hidden = !LISTA_ABERTA;
-  listaBotao.textContent = LISTA_ABERTA ? t("ocultarLista") : t("verLista");
-  listaBotao.setAttribute("aria-expanded", String(LISTA_ABERTA));
-  ordemNovo.textContent = t("maisNovos");
-  ordemAntigo.textContent = t("maisAntigos");
+  lista.replaceChildren(...(registros.length ? [criarTabela(registros)] : []));
+  lista.hidden = false;
+  ordemControles.hidden = false;
   ordemNovo.classList.toggle("ativo", ORDEM === "novo");
   ordemAntigo.classList.toggle("ativo", ORDEM === "antigo");
-  vazio.hidden = !CARREGOU || !LISTA_ABERTA || registros.length > 0;
+  vazio.hidden = !CARREGOU || registros.length > 0;
   erro.hidden = !FALHOU;
   contagem.textContent = CARREGOU ? registros.length + " " + (registros.length === 1 ? t("dump") : t("dumps")) : "";
 }
@@ -381,12 +396,9 @@ seletor.addEventListener("click", () => {
   else fecharMenuIdiomas();
 });
 
-listaBotao.addEventListener("click", () => {
-  LISTA_ABERTA = !LISTA_ABERTA;
-  mostrar();
-});
-ordemNovo.addEventListener("click", () => { ORDEM = "novo"; mostrar(); });
-ordemAntigo.addEventListener("click", () => { ORDEM = "antigo"; mostrar(); });
+ordemNovo.addEventListener("click", () => atualizarRota("novo"));
+ordemAntigo.addEventListener("click", () => atualizarRota("antigo"));
+window.addEventListener("hashchange", () => { lerRota(); mostrar(); });
 
 const menuBotao = document.getElementById("menu-botao");
 menuBotao.addEventListener("click", () => {
@@ -407,7 +419,7 @@ document.addEventListener("click", event => {
   if (!seletorContainer.contains(event.target)) fecharMenuIdiomas();
 });
 campo.addEventListener("input", mostrar);
-
+lerRota();
 aplicarIdioma();
 
 fetch("Module.json", { cache: "no-cache" })
