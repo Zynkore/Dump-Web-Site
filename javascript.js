@@ -127,8 +127,6 @@ function montarJogos(modulo) {
       return { jogo, versoes };
     }).filter(item => item.jogo && item.versoes.length);
   }
-
-  // Compatibilidade com o formato antigo: { "Games": { "Jogo": ["versao"] } }.
   return Object.entries(jogos).map(([jogo, versoes]) => ({
     jogo,
     versoes: (Array.isArray(versoes) ? versoes : []).map(valor => {
