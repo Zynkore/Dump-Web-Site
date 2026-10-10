@@ -257,9 +257,9 @@ function criarBloco(nomeExibido, jogo, versoes) {
   const h = document.createElement("h2");
   const link = document.createElement("a");
   link.className = "jogo-link";
-  link.href = `#${encodeURIComponent(jogo)}`;
-  link.textContent = `#${jogo}`;
-  h.append(link, document.createTextNode(` (${nomeExibido})`));
+  link.href = `#${encodeURIComponent(jogo)}/Dump-list/Id=${ORDEM === "antigo" ? "b-a" : "a-b"}`;
+  link.textContent = nomeExibido;
+  h.append(link);
   const n = document.createElement("span");
   n.className = "n";
   n.textContent = versoes.length + " " + (versoes.length === 1 ? t("versao") : t("versoes"));
@@ -286,43 +286,13 @@ function atualizarRota(ordem = ORDEM) {
   mostrar();
 }
 
-function criarTabela(registros) {
-  const tabela = document.createElement("table");
-  tabela.className = "dumps-tabela";
-  const cabecalho = document.createElement("thead");
-  const cabecalhoLinha = document.createElement("tr");
-  for (const texto of [t("jogo"), t("versao"), t("dataTabela"), ""]) {
-    const celula = document.createElement("th");
-    celula.scope = "col";
-    celula.textContent = texto;
-    cabecalhoLinha.append(celula);
-  }
-  cabecalho.append(cabecalhoLinha);
-  const corpo = document.createElement("tbody");
+function criarListaPorJogo(registros) {
+  const grupos = new Map();
   for (const registro of registros) {
-    const linha = document.createElement("tr");
-    const jogo = document.createElement("td");
-    const jogoLink = document.createElement("a");
-    jogoLink.className = "tabela-jogo-link";
-    jogoLink.href = `#${encodeURIComponent(registro.jogo)}/Dump-list/Id=${ORDEM === "antigo" ? "b-a" : "a-b"}`;
-    jogoLink.textContent = `#${registro.jogo} (${registro.display})`;
-    jogo.append(jogoLink);
-    const versao = document.createElement("td");
-    versao.textContent = registro.dump.nome;
-    const data = document.createElement("td");
-    data.textContent = registro.dump.data || "—";
-    const acao = document.createElement("td");
-    const baixar = document.createElement("a");
-    baixar.className = "btn tabela-btn";
-    baixar.textContent = t("baixar");
-    baixar.href = caminhoDoArquivo(registro.jogo, registro.dump.arquivo);
-    baixar.setAttribute("download", registro.dump.arquivo.split("/").pop());
-    acao.append(baixar);
-    linha.append(jogo, versao, data, acao);
-    corpo.append(linha);
+    if (!grupos.has(registro.jogo)) grupos.set(registro.jogo, { display: registro.display, dumps: [] });
+    grupos.get(registro.jogo).dumps.push(registro.dump);
   }
-  tabela.append(cabecalho, corpo);
-  return tabela;
+  return [...grupos.entries()].map(([jogo, grupo]) => criarBloco(grupo.display, jogo, grupo.dumps));
 }
 
 function mostrar() {
@@ -339,7 +309,7 @@ function mostrar() {
     ? compararMaisRecente(a.dump, b.dump)
     : compararMaisRecente(b.dump, a.dump));
 
-  lista.replaceChildren(...(registros.length ? [criarTabela(registros)] : []));
+  lista.replaceChildren(...(registros.length ? criarListaPorJogo(registros) : []));
   lista.hidden = false;
   ordemControles.hidden = false;
   ordemNovo.classList.toggle("ativo", ORDEM === "novo");
