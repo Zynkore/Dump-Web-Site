@@ -83,3 +83,37 @@ body::after {
   .dumps-tabela th, .dumps-tabela td { padding: 12px 8px; }
   .tabela-btn { min-width: 0; padding: 8px 7px; font-size: .72rem; }
 }
+
+/* Malha de hexágonos: o efeito de colmeia fica atrás do conteúdo. */
+body::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='166' viewBox='0 0 96 166'%3E%3Cpath d='M48 1 95 28v55l-47 27L1 83V28L48 1Zm0 109v55M1 83l47 27 47-27' fill='none' stroke='%23aab8ff' stroke-opacity='.18' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 96px 166px;
+  opacity: 0;
+  transform: rotate(-7deg) scale(1.08);
+  animation: colmeia-flutuante 19s ease-in-out infinite;
+}
+
+@keyframes colmeia-flutuante {
+  0%, 100% { opacity: 0; transform: rotate(-7deg) translate3d(-2%, -1%, 0) scale(1.08); }
+  18% { opacity: .42; }
+  45% { opacity: .12; transform: rotate(4deg) translate3d(2%, 1%, 0) scale(1.14); }
+  64% { opacity: .34; }
+  84% { opacity: 0; transform: rotate(11deg) translate3d(-1%, 2%, 0) scale(1.06); }
+}
+
+.hero::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='125' viewBox='0 0 72 125'%3E%3Cpath d='M36 1 71 21v41L36 82 1 62V21L36 1Zm0 81v42M1 62l35 20 35-20' fill='none' stroke='%23ffffff' stroke-opacity='.14' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 72px 125px;
+  animation: colmeia-card 13s ease-in-out infinite;
+}
+
+@keyframes colmeia-card {
+  0%, 100% { opacity: 0; transform: translateX(-10%) rotate(-7deg); }
+  24% { opacity: .25; }
+  53% { opacity: .06; transform: translateX(8%) rotate(5deg); }
+  76% { opacity: .2; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after, .hero::before { animation: none; opacity: .08; }
+}
