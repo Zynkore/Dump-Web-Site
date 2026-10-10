@@ -10,7 +10,7 @@ const TEXTOS = {
     busca: "Buscar jogo ou versão",
     baixar: "Baixar",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Lista do jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Tente outro nome de jogo ou versão.",
@@ -27,7 +27,7 @@ const TEXTOS = {
     busca: "Procurar jogo ou versão",
     baixar: "Transferir",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Lista do jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Experimente outro nome de jogo ou versão.",
@@ -44,7 +44,7 @@ const TEXTOS = {
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date", jogoKicker: "Game dump list", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -61,7 +61,7 @@ const TEXTOS = {
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date", jogoKicker: "Game dump list", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -303,7 +303,30 @@ function criarListaPorJogo(registros) {
     if (!grupos.has(registro.jogo)) grupos.set(registro.jogo, { display: registro.display, dumps: [] });
     grupos.get(registro.jogo).dumps.push(registro.dump);
   }
-  return [...grupos.entries()].map(([jogo, grupo]) => criarBloco(grupo.display, jogo, grupo.dumps));
+  return [...grupos.entries()].map(([jogo, grupo]) => {
+    const card = document.createElement("article");
+    card.className = "jogo-card";
+    const cabecalho = document.createElement("div");
+    cabecalho.className = "jogo-card-cabecalho";
+    const titulo = document.createElement("h2");
+    const link = document.createElement("a");
+    link.href = `#${encodeURIComponent(jogo)}/Dump-list/Id=${ORDEM === "antigo" ? "b-a" : "a-b"}`;
+    link.textContent = grupo.display;
+    titulo.append(link);
+    const resumo = document.createElement("p");
+    resumo.textContent = `${grupo.dumps.length} ${grupo.dumps.length === 1 ? t("versao") : t("versoes")}`;
+    cabecalho.append(titulo, resumo);
+    const ultima = document.createElement("span");
+    ultima.className = "jogo-card-ultima";
+    const maisRecente = [...grupo.dumps].sort(compararMaisRecente)[0];
+    ultima.textContent = maisRecente ? `${maisRecente.nome}${maisRecente.data ? " · " + maisRecente.data : ""}` : "";
+    const abrir = document.createElement("a");
+    abrir.className = "btn jogo-card-botao";
+    abrir.href = link.href;
+    abrir.textContent = t("abrirJogo");
+    card.append(cabecalho, ultima, abrir);
+    return card;
+  });
 }
 
 function candidatosDoBit(dump, bit) {
