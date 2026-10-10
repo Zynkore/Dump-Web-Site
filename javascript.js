@@ -406,8 +406,9 @@ function mostrarDetalhe() {
   jogoResumo.textContent = `${dumps.length} ${dumps.length === 1 ? t("versao") : t("versoes")}`;
   baixarTodosBotao.textContent = t("baixarTodos");
   voltarBotao.textContent = "‹ " + t("voltar");
-  detalheNovo.textContent = t("maisNovos");
-  detalheAntigo.textContent = t("maisAntigos");
+  trocarTextoSuave(detalheNovo, t("maisNovos"));
+  trocarTextoSuave(detalheAntigo, t("maisAntigos"));
+  detalheNovo.parentElement.classList.toggle("antigo", ORDEM === "antigo");
   detalheNovo.classList.toggle("ativo", ORDEM === "novo");
   detalheAntigo.classList.toggle("ativo", ORDEM === "antigo");
   jogoDumps.replaceChildren(...dumps.map(dump => criarDumpDetalhe(jogo.jogo, dump)));
@@ -442,9 +443,19 @@ function mostrar() {
   ordemControles.hidden = false;
   ordemNovo.classList.toggle("ativo", ORDEM === "novo");
   ordemAntigo.classList.toggle("ativo", ORDEM === "antigo");
+  ordemControles.classList.toggle("antigo", ORDEM === "antigo");
   vazio.hidden = !CARREGOU || registros.length > 0;
   erro.hidden = !FALHOU;
   contagem.textContent = CARREGOU ? registros.length + " " + (registros.length === 1 ? t("dump") : t("dumps")) : "";
+}
+
+function trocarTextoSuave(elemento, texto) {
+  if (elemento.textContent === texto) return;
+  elemento.classList.add("trocando");
+  window.setTimeout(() => {
+    elemento.textContent = texto;
+    window.requestAnimationFrame(() => elemento.classList.remove("trocando"));
+  }, 130);
 }
 
 function aplicarIdioma() {
@@ -454,8 +465,9 @@ function aplicarIdioma() {
   document.getElementById("rotulo-idioma").textContent = t("idioma");
   campo.placeholder = t("busca");
   campo.setAttribute("aria-label", t("busca"));
-  ordemNovo.textContent = t("jogosMaisRecentes");
-  ordemAntigo.textContent = t("jogosMaisAntigos");
+  trocarTextoSuave(ordemNovo, t("jogosMaisRecentes"));
+  trocarTextoSuave(ordemAntigo, t("jogosMaisAntigos"));
+  ordemControles.classList.toggle("antigo", ORDEM === "antigo");
   seletor.textContent = `${IDIOMA} · ${NOMES[IDIOMA]}`;
   menuIdiomas.querySelectorAll(".idioma-opcao").forEach(opcao => {
     const ativo = opcao.dataset.codigo === IDIOMA;

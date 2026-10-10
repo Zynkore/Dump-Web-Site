@@ -293,3 +293,13 @@ body::after {
 @media (max-width: 560px) {
   .idioma-menu { top: 74px; right: 18px; width: min(220px, calc(100vw - 36px)); }
 }
+
+.ordem-controles { position: relative; isolation: isolate; overflow: hidden; }
+.ordem-indicador { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 6px); border-radius: 7px; background: #303035; box-shadow: 0 4px 14px rgba(0,0,0,.22); transition: transform 420ms cubic-bezier(.22,.8,.25,1), background 250ms ease; }
+.ordem-controles.antigo .ordem-indicador { transform: translateX(100%); }
+.ordem-botao { position: relative; z-index: 1; transition: color 260ms ease, opacity 260ms ease; }
+.ordem-botao.trocando { opacity: 0; transform: translateY(3px); }
+.ordem-botao.ativo { color: var(--ink); }
+@media (prefers-reduced-motion: reduce) {
+  .ordem-indicador, .ordem-botao { transition: none; }
+}
