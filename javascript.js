@@ -12,7 +12,7 @@ const TEXTOS = {
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Tente outro nome de jogo ou versão.",
     erro: "Não foi possível carregar o Module.json. Abra o site pelo endereço publicado (Netlify), não direto do arquivo no celular.",
-    aviso: "Este site foi criado pelo Claude (IA da Anthropic), exceto os dumps.",
+    aviso: "By Claude & Manus, exceto os dumps.",
     discord: "Quer algum dump ou algum está desatualizado? Fale comigo no Discord:"
   },
   "pt-PT": {
@@ -26,7 +26,7 @@ const TEXTOS = {
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Experimente outro nome de jogo ou versão.",
     erro: "Não foi possível carregar o Module.json. Abra o site pelo endereço publicado (Netlify) e não diretamente do ficheiro no telemóvel.",
-    aviso: "Este site foi criado pelo Claude (IA da Anthropic), exceto os dumps.",
+    aviso: "By Claude & Manus, exceto os dumps.",
     discord: "Quer algum dump ou algum está desatualizado? Fale comigo no Discord:"
   },
   "en-US": {
@@ -40,7 +40,7 @@ const TEXTOS = {
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
     erro: "Couldn't load Module.json. Open the site from its published address (Netlify), not straight from the file on your phone.",
-    aviso: "This site was made by Claude (Anthropic's AI), except for the dumps.",
+    aviso: "By Claude & Manus, except for the dumps.",
     discord: "Want a dump, or is one out of date? Message me on Discord:"
   },
   "en-GB": {
@@ -54,7 +54,7 @@ const TEXTOS = {
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
     erro: "Couldn't load Module.json. Open the site from its published address (Netlify), not straight from the file on your mobile.",
-    aviso: "This site was made by Claude (Anthropic's AI), except for the dumps.",
+    aviso: "By Claude & Manus, except for the dumps.",
     discord: "Want a dump, or is one out of date? Message me on Discord:"
   }
 };
