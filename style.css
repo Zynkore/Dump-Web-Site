@@ -286,3 +286,10 @@ body::after {
 @media (max-width: 560px) {
   #ordem-controles .ordem-botao { padding: 7px 5px; font-size: .68rem; line-height: 1.25; }
 }
+
+.app-header { position: relative; z-index: 100; }
+.topo, .idioma-picker { position: relative; z-index: 101; }
+.idioma-menu { position: fixed; top: 82px; right: max(18px, calc((100vw - 820px) / 2 + 18px)); z-index: 200; }
+@media (max-width: 560px) {
+  .idioma-menu { top: 74px; right: 18px; width: min(220px, calc(100vw - 36px)); }
+}
