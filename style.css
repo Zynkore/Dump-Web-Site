@@ -22,3 +22,64 @@
   .ordem-botao { flex: 1; }
   .dumps-tabela th, .dumps-tabela td { padding: 13px 12px; }
 }
+
+/* Linhas atmosféricas atrás dos elementos: discretas, móveis e não interativas. */
+body::after {
+  position: fixed;
+  z-index: 0;
+  inset: -35%;
+  background:
+    repeating-linear-gradient(112deg, transparent 0 88px, rgba(117, 143, 255, .075) 89px, transparent 90px 176px),
+    repeating-linear-gradient(68deg, transparent 0 132px, rgba(255, 255, 255, .045) 133px, transparent 134px 264px);
+  content: "";
+  pointer-events: none;
+  opacity: .5;
+  transform: rotate(-8deg) scale(1.08);
+  animation: linhas-flutuantes 17s ease-in-out infinite;
+}
+
+@keyframes linhas-flutuantes {
+  0%, 100% { opacity: 0; transform: rotate(-8deg) translate3d(-2%, -1%, 0) scale(1.08); }
+  18% { opacity: .5; }
+  48% { opacity: .14; transform: rotate(5deg) translate3d(2%, 1%, 0) scale(1.12); }
+  68% { opacity: .44; }
+  86% { opacity: 0; transform: rotate(12deg) translate3d(-1%, 2%, 0) scale(1.06); }
+}
+
+.hero::before {
+  position: absolute;
+  z-index: 0;
+  inset: -70% -30%;
+  background: repeating-linear-gradient(118deg, transparent 0 74px, rgba(255, 255, 255, .07) 75px, transparent 76px 150px);
+  content: "";
+  pointer-events: none;
+  opacity: 0;
+  animation: linhas-card 11s ease-in-out infinite;
+}
+.hero > * { position: relative; z-index: 1; }
+
+@keyframes linhas-card {
+  0%, 100% { opacity: 0; transform: translateX(-10%) rotate(-8deg); }
+  25% { opacity: .28; }
+  52% { opacity: .06; transform: translateX(8%) rotate(4deg); }
+  75% { opacity: .22; }
+}
+
+.games-section { width: 100%; min-width: 0; }
+#lista { width: 100%; min-width: 0; overflow-x: auto; border-radius: 22px; }
+.dumps-tabela { min-width: 0; table-layout: fixed; }
+.dumps-tabela th:first-child, .dumps-tabela td:first-child { width: 32%; }
+.dumps-tabela th:nth-child(2), .dumps-tabela td:nth-child(2) { width: 24%; }
+.dumps-tabela th:nth-child(3), .dumps-tabela td:nth-child(3) { width: 18%; }
+.dumps-tabela th, .dumps-tabela td { overflow-wrap: anywhere; }
+
+@media (prefers-reduced-motion: reduce) {
+  body::after, .hero::before { animation: none; opacity: .08; }
+}
+
+@media (max-width: 560px) {
+  .hero { width: 100%; max-width: 100%; }
+  .dumps-tabela { font-size: .78rem; }
+  .dumps-tabela th, .dumps-tabela td { padding: 12px 8px; }
+  .tabela-btn { min-width: 0; padding: 8px 7px; font-size: .72rem; }
+}
