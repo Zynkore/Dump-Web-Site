@@ -1,1 +1,1 @@
-# By `Claude` *& `Manus`
+# By `Claude` & `Manus`
