@@ -125,7 +125,7 @@ function prepararRede() {
   redeCanvas.style.width = redeLargura + "px";
   redeCanvas.style.height = redeAltura + "px";
   redeContexto.setTransform(redeDpr, 0, 0, redeDpr, 0, 0);
-  const quantidade = redeLargura < 600 ? 25 : Math.min(48, Math.round(redeLargura / 24));
+  const quantidade = redeLargura < 600 ? 36 : Math.min(58, Math.round(redeLargura / 22));
   redePontos = Array.from({ length: quantidade }, () => ({
     x: Math.random() * redeLargura,
     y: Math.random() * redeAltura,
@@ -138,7 +138,7 @@ function prepararRede() {
 
 function desenharRede() {
   redeContexto.clearRect(0, 0, redeLargura, redeAltura);
-  const distanciaMaxima = redeLargura < 600 ? 104 : 128;
+  const distanciaMaxima = redeLargura < 600 ? 142 : 150;
   for (const ponto of redePontos) {
     ponto.x += ponto.vx;
     ponto.y += ponto.vy;
@@ -154,7 +154,7 @@ function desenharRede() {
       const dy = a.y - b.y;
       const distancia = Math.hypot(dx, dy);
       if (distancia < distanciaMaxima) {
-        const opacidade = (1 - distancia / distanciaMaxima) * .34;
+        const opacidade = (1 - distancia / distanciaMaxima) * .48;
         redeContexto.strokeStyle = `rgba(225, 234, 255, ${opacidade})`;
         redeContexto.lineWidth = .7;
         redeContexto.beginPath();
@@ -165,7 +165,7 @@ function desenharRede() {
     }
   }
   for (const ponto of redePontos) {
-    const brilho = .62 + Math.sin(ponto.brilho) * .2;
+    const brilho = .82 + Math.sin(ponto.brilho) * .16;
     redeContexto.fillStyle = `rgba(255, 255, 255, ${brilho})`;
     redeContexto.beginPath();
     redeContexto.arc(ponto.x, ponto.y, ponto.raio, 0, Math.PI * 2);

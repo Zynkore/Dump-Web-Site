@@ -326,3 +326,8 @@ body::before, body::after { display: none !important; }
 #rede-canvas { position: fixed; z-index: 0; inset: 0; width: 100%; height: 100%; opacity: .68; pointer-events: none; }
 .wrap { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) { #rede-canvas { opacity: .32; } }
+
+body { isolation: isolate; }
+#rede-canvas { z-index: 1; opacity: .86; }
+.wrap { z-index: 2; }
+@media (prefers-reduced-motion: reduce) { #rede-canvas { opacity: .52; } }
