@@ -1,19 +1,5 @@
-// Os dumps vêm do Module.json. Cada versão vira o arquivo:
-//   Files/<Jogo>/<Versao>.cpp
-//
-// Formato do Module.json:
-//   "Games": { "Jogo": ["1.2.0", "1.1.0"] }
-
 const PASTA_ARQUIVOS = "Files";
-const EXTENSAO = ".cpp";
-
-// ============================================================
-// IDIOMAS
-// Variantes com texto diferente têm entrada própria em TEXTOS.
-// As outras apontam para uma delas em ALIAS (mesmo texto).
-// Para adicionar uma variante: coloque em NOMES e (se o texto for
-// igual a outra) em ALIAS.
-// ============================================================
+const EXTENSAO = ".zip";
 const TEXTOS = {
   "pt-BR": {
     idioma: "Idioma",
@@ -107,9 +93,6 @@ function t(chave) {
   return TEXTOS[ALIAS[IDIOMA] || IDIOMA][chave];
 }
 
-// ============================================================
-// ELEMENTOS E DADOS
-// ============================================================
 const lista = document.getElementById("lista");
 const vazio = document.getElementById("vazio");
 const erro = document.getElementById("erro");
@@ -117,10 +100,8 @@ const campo = document.getElementById("q");
 const contagem = document.getElementById("n");
 const seletor = document.getElementById("idioma");
 
-let JOGOS = [];          // [{ jogo, versoes: ["3.69.2", ...] }]
-let CARREGOU = false;
+let JOGOS = [];
 let FALHOU = false;
-
 function montarJogos(modulo) {
   const jogos = (modulo && modulo.Games) || {};
   return Object.entries(jogos).map(([jogo, versoes]) => ({
@@ -177,7 +158,7 @@ function mostrar() {
   for (const g of ordenados) {
     const versoes = g.versoes
       .filter(v => (g.jogo + " " + v).toLowerCase().includes(q))
-      .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));   // mais nova primeiro
+      .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
     if (!versoes.length) continue;
     total += versoes.length;
     blocos.push(criarBloco(g.jogo, versoes));
@@ -200,7 +181,6 @@ function aplicarIdioma() {
   mostrar();
 }
 
-// seletor de idioma
 for (const [codigo, nome] of Object.entries(NOMES)) {
   const op = document.createElement("option");
   op.value = codigo; op.textContent = nome;
