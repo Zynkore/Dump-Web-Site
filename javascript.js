@@ -102,7 +102,9 @@ const vazio = document.getElementById("vazio");
 const erro = document.getElementById("erro");
 const campo = document.getElementById("q");
 const contagem = document.getElementById("n");
-const seletor = document.getElementById("idioma");
+const seletor = document.getElementById("idioma-botao");
+const menuIdiomas = document.getElementById("idioma-menu");
+const seletorContainer = document.querySelector(".idioma-picker");
 
 let JOGOS = [];
 let CARREGOU = false;
@@ -280,19 +282,55 @@ function aplicarIdioma() {
   document.getElementById("rotulo-idioma").textContent = t("idioma");
   campo.placeholder = t("busca");
   campo.setAttribute("aria-label", t("busca"));
-  seletor.value = IDIOMA;
+  seletor.textContent = `${IDIOMA} · ${NOMES[IDIOMA]}`;
+  menuIdiomas.querySelectorAll(".idioma-opcao").forEach(opcao => {
+    const ativo = opcao.dataset.codigo === IDIOMA;
+    opcao.classList.toggle("ativo", ativo);
+    opcao.setAttribute("aria-selected", String(ativo));
+  });
   mostrar();
 }
 
-for (const [codigo, nome] of Object.entries(NOMES)) {
-  const op = document.createElement("option");
-  op.value = codigo; op.textContent = nome;
-  seletor.append(op);
+function fecharMenuIdiomas() {
+  menuIdiomas.hidden = true;
+  seletor.setAttribute("aria-expanded", "false");
 }
-seletor.addEventListener("change", () => {
-  IDIOMA = seletor.value;
-  try { localStorage.setItem("idioma", IDIOMA); } catch (e) {}
-  aplicarIdioma();
+
+function abrirMenuIdiomas() {
+  menuIdiomas.hidden = false;
+  seletor.setAttribute("aria-expanded", "true");
+}
+
+for (const [codigo, nome] of Object.entries(NOMES)) {
+  const opcao = document.createElement("button");
+  opcao.type = "button";
+  opcao.className = "idioma-opcao";
+  opcao.dataset.codigo = codigo;
+  opcao.setAttribute("role", "option");
+  opcao.innerHTML = `<span class="idioma-codigo">${codigo}</span><span>${nome}</span>`;
+  opcao.addEventListener("click", () => {
+    IDIOMA = codigo;
+    try { localStorage.setItem("idioma", IDIOMA); } catch (e) {}
+    fecharMenuIdiomas();
+    aplicarIdioma();
+  });
+  menuIdiomas.append(opcao);
+}
+
+seletor.addEventListener("click", () => {
+  if (menuIdiomas.hidden) abrirMenuIdiomas();
+  else fecharMenuIdiomas();
+});
+seletor.addEventListener("keydown", event => {
+  if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    abrirMenuIdiomas();
+    menuIdiomas.querySelector(`[data-codigo="${IDIOMA}"]`)?.focus();
+  }
+  if (event.key === "Escape") fecharMenuIdiomas();
+});
+document.addEventListener("click", event => {
+  if (!seletorContainer.contains(event.target)) fecharMenuIdiomas();
 });
 campo.addEventListener("input", mostrar);
 

@@ -10,8 +10,11 @@
 <body>
 <div class="wrap">
   <div class="topo">
-    <label for="idioma" id="rotulo-idioma"></label>
-    <select id="idioma"></select>
+    <span id="rotulo-idioma" class="rotulo-idioma"></span>
+    <div class="idioma-picker">
+      <button id="idioma-botao" class="idioma-botao" type="button" aria-haspopup="listbox" aria-expanded="false"></button>
+      <div id="idioma-menu" class="idioma-menu" role="listbox" hidden></div>
+    </div>
   </div>
 
   <h1 data-i18n="titulo"></h1>
