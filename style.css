@@ -347,3 +347,12 @@ button::-moz-focus-inner { border: 0; }
 /* O seletor de ordem fica transparente; apenas a opção ativa recebe destaque. */
 .ordem-controles { background: transparent; }
 .ordem-indicador { background: rgba(48, 48, 53, .9); }
+
+.opcoes-painel { position: fixed; z-index: 180; top: 74px; left: max(18px, calc((100vw - 820px) / 2 + 18px)); width: min(280px, calc(100vw - 36px)); padding: 14px; border: 1px solid #38383d; border-radius: 16px; background: rgba(18,18,20,.97); box-shadow: 0 18px 50px rgba(0,0,0,.48); animation: entrada-tela 220ms ease both; }
+.opcoes-painel[hidden] { display: none; }
+.opcoes-cabecalho { display: flex; align-items: center; justify-content: space-between; padding: 3px 4px 10px; color: var(--ink); }
+.fechar-opcoes { padding: 0 6px; border: 0; background: transparent; color: var(--muted); font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.opcoes-links { display: grid; gap: 5px; }
+.opcoes-links a { padding: 11px 10px; border-radius: 9px; color: var(--ink); font-weight: 700; text-decoration: none; }
+.opcoes-links a:hover { background: #28282d; color: var(--accent); }
+@media (max-width: 560px) { .opcoes-painel { top: 68px; left: 18px; } }

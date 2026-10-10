@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Dumps</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css?v=transparent-order">
+<link rel="stylesheet" href="style.css?v=options-menu">
 </head>
 <body>
 <canvas id="rede-canvas" aria-hidden="true"></canvas>
@@ -22,6 +22,17 @@
       </div>
     </div>
   </header>
+
+  <aside id="opcoes-painel" class="opcoes-painel" hidden aria-label="Opções">
+    <div class="opcoes-cabecalho">
+      <strong data-i18n="menuTitulo">Opções</strong>
+      <button id="fechar-opcoes" class="fechar-opcoes" type="button" aria-label="Fechar">×</button>
+    </div>
+    <nav class="opcoes-links">
+      <a href="https://github.com/Zynkore/Dump-Web-Site" target="_blank" rel="noopener noreferrer" data-i18n="github">GitHub</a>
+      <a href="#Dump-list/Id=a-b" data-i18n="todosJogos">Todos os jogos</a>
+    </nav>
+  </aside>
 
   <main id="principal-view">
     <section class="hero">

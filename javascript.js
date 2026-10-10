@@ -10,7 +10,7 @@ const TEXTOS = {
     busca: "Buscar jogo ou versão",
     baixar: "Baixar",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogosMaisRecentes: "Jogo mais recente ao mais antigo", jogosMaisAntigos: "Jogo mais antigo ao mais recente", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogosMaisRecentes: "Jogo mais recente ao mais antigo", jogosMaisAntigos: "Jogo mais antigo ao mais recente", menuTitulo: "Opções", github: "GitHub", todosJogos: "Todos os jogos", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Tente outro nome de jogo ou versão.",
@@ -27,7 +27,7 @@ const TEXTOS = {
     busca: "Procurar jogo ou versão",
     baixar: "Transferir",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogosMaisRecentes: "Jogo mais recente ao mais antigo", jogosMaisAntigos: "Jogo mais antigo ao mais recente", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogosMaisRecentes: "Jogo mais recente ao mais antigo", jogosMaisAntigos: "Jogo mais antigo ao mais recente", menuTitulo: "Opções", github: "GitHub", todosJogos: "Todos os jogos", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Card do jogo", abrirJogo: "Abrir jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Experimente outro nome de jogo ou versão.",
@@ -44,7 +44,7 @@ const TEXTOS = {
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogosMaisRecentes: "Newest game to oldest", jogosMaisAntigos: "Oldest game to newest", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogosMaisRecentes: "Newest game to oldest", jogosMaisAntigos: "Oldest game to newest", menuTitulo: "Options", github: "GitHub", todosJogos: "All games", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -61,7 +61,7 @@ const TEXTOS = {
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogosMaisRecentes: "Newest game to oldest", jogosMaisAntigos: "Oldest game to newest", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogosMaisRecentes: "Newest game to oldest", jogosMaisAntigos: "Oldest game to newest", menuTitulo: "Options", github: "GitHub", todosJogos: "All games", jogo: "Game", dataTabela: "Date", jogoKicker: "Game card", abrirJogo: "Open game", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -585,12 +585,22 @@ detalheNovo.addEventListener("click", () => atualizarRota("novo"));
 detalheAntigo.addEventListener("click", () => atualizarRota("antigo"));
 
 const menuBotao = document.getElementById("menu-botao");
+const opcoesPainel = document.getElementById("opcoes-painel");
+const fecharOpcoes = document.getElementById("fechar-opcoes");
+function alternarOpcoes(aberto) {
+  opcoesPainel.hidden = !aberto;
+  menuBotao.setAttribute("aria-expanded", String(aberto));
+  menuBotao.classList.toggle("aberto", aberto);
+}
 menuBotao.addEventListener("click", () => {
   const aberto = menuBotao.getAttribute("aria-expanded") === "true";
-  menuBotao.setAttribute("aria-expanded", String(!aberto));
-  menuBotao.classList.toggle("aberto", !aberto);
-  if (!aberto) campo.focus();
+  alternarOpcoes(!aberto);
 });
+fecharOpcoes.addEventListener("click", () => alternarOpcoes(false));
+document.addEventListener("click", event => {
+  if (!opcoesPainel.hidden && !opcoesPainel.contains(event.target) && !menuBotao.contains(event.target)) alternarOpcoes(false);
+});
+opcoesPainel.querySelectorAll("a").forEach(link => link.addEventListener("click", () => alternarOpcoes(false)));
 seletor.addEventListener("keydown", event => {
   if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") {
     event.preventDefault();
