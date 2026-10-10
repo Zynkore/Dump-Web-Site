@@ -10,7 +10,7 @@ const TEXTOS = {
     busca: "Buscar jogo ou versão",
     baixar: "Baixar",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Lista do jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Tente outro nome de jogo ou versão.",
@@ -27,7 +27,7 @@ const TEXTOS = {
     busca: "Procurar jogo ou versão",
     baixar: "Transferir",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data",
+    listaTitulo: "Lista de dumps", verLista: "Ver lista de dumps", ocultarLista: "Ocultar lista", maisNovos: "Mais novos primeiro", maisAntigos: "Mais antigos primeiro", jogo: "Jogo", dataTabela: "Data", jogoKicker: "Lista do jogo", voltar: "Voltar", baixarTodos: "Baixar todos", baixarVersao: "Baixar versão", bits: "Bits",
     versao: "versão", versoes: "versões",
     data: "Data", maisRecente: "Mais recente", primeiro: "Primeiro",
     vazio: "Nenhum dump encontrado. Experimente outro nome de jogo ou versão.",
@@ -44,7 +44,7 @@ const TEXTOS = {
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date", jogoKicker: "Game dump list", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -61,7 +61,7 @@ const TEXTOS = {
     busca: "Search game or version",
     baixar: "Download",
     dump: "dump", dumps: "dumps",
-    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date",
+    listaTitulo: "Dump list", verLista: "Show dump list", ocultarLista: "Hide dump list", maisNovos: "Newest first", maisAntigos: "Oldest first", jogo: "Game", dataTabela: "Date", jogoKicker: "Game dump list", voltar: "Back", baixarTodos: "Download all", baixarVersao: "Download version", bits: "Bits",
     versao: "version", versoes: "versions",
     data: "Date", maisRecente: "Latest", primeiro: "First",
     vazio: "No dumps found. Try another game name or version.",
@@ -120,6 +120,15 @@ const seletorContainer = document.querySelector(".idioma-picker");
 const ordemControles = document.getElementById("ordem-controles");
 const ordemNovo = document.getElementById("ordem-novo");
 const ordemAntigo = document.getElementById("ordem-antigo");
+const principalView = document.getElementById("principal-view");
+const jogoView = document.getElementById("jogo-view");
+const jogoTitulo = document.getElementById("jogo-titulo");
+const jogoResumo = document.getElementById("jogo-resumo");
+const jogoDumps = document.getElementById("jogo-dumps");
+const voltarBotao = document.getElementById("voltar-botao");
+const baixarTodosBotao = document.getElementById("baixar-todos");
+const detalheNovo = document.getElementById("detalhe-novo");
+const detalheAntigo = document.getElementById("detalhe-antigo");
 let ORDEM = "novo";
 let JOGO_DA_ROTA = "";
 
@@ -142,7 +151,7 @@ function montarJogos(modulo) {
       const versoes = dumps.map(dump => {
         if (typeof dump === "string") {
           const arquivo = normalizarArquivo(dump);
-          return arquivo ? { nome: arquivo.replace(/\.(zip|cpp|cs)$/i, ""), arquivo, base: arquivo } : null;
+          return arquivo ? { nome: arquivo.replace(/\.(zip|cpp|cs)$/i, ""), arquivo, base: arquivo, bits: [], arquivos: {} } : null;
         }
         const informado = String(dump.file || "").trim();
         const arquivo = normalizarArquivo(informado);
@@ -152,7 +161,9 @@ function montarJogos(modulo) {
           arquivo: arquivo || "",
           base: arquivo || informado,
           maisRecente: dump.IsLatestDump === true,
-          primeiro: dump.IsFirstDump === true
+          primeiro: dump.IsFirstDump === true,
+          bits: (Array.isArray(dump.Bits) ? dump.Bits : Array.isArray(dump.bits) ? dump.bits : []).map(Number).filter(Number.isFinite),
+          arquivos: dump.files && typeof dump.files === "object" ? dump.files : {}
         };
       }).filter(item => item && item.base);
       return { jogo, display, versoes };
@@ -164,7 +175,7 @@ function montarJogos(modulo) {
     versoes: (Array.isArray(versoes) ? versoes : []).map(valor => {
       const texto = String(valor);
       const arquivo = normalizarArquivo(texto);
-      return { nome: texto.replace(/\.(zip|cpp|cs)$/i, ""), arquivo, base: arquivo || texto };
+      return { nome: texto.replace(/\.(zip|cpp|cs)$/i, ""), arquivo, base: arquivo || texto, bits: [], arquivos: {} };
     })
   }));
 }
@@ -295,7 +306,101 @@ function criarListaPorJogo(registros) {
   return [...grupos.entries()].map(([jogo, grupo]) => criarBloco(grupo.display, jogo, grupo.dumps));
 }
 
+function candidatosDoBit(dump, bit) {
+  if (!bit) return [dump.arquivo];
+  const informado = dump.arquivo || dump.base;
+  const extensao = (informado.match(/\.(zip|cpp|cs)$/i) || ["", ".zip"])[0];
+  const base = informado.replace(/\.(zip|cpp|cs)$/i, "");
+  const mapeado = dump.arquivos[String(bit)] || dump.arquivos[bit];
+  return mapeado ? [mapeado] : [`${base}-${bit}${extensao}`, `${base}_${bit}${extensao}`, `${base}.${bit}${extensao}`];
+}
+
+async function baixarArquivo(jogo, dump, bit = null) {
+  const candidatos = candidatosDoBit(dump, bit);
+  let arquivo = candidatos[0];
+  for (const candidato of candidatos) {
+    try {
+      const resposta = await fetch(caminhoDoArquivo(jogo, candidato), { method: "HEAD", cache: "no-cache" });
+      if (resposta.ok) { arquivo = candidato; break; }
+    } catch (e) {}
+  }
+  const link = document.createElement("a");
+  link.href = caminhoDoArquivo(jogo, arquivo);
+  link.download = arquivo.split("/").pop();
+  link.click();
+}
+
+function criarDumpDetalhe(jogo, dump) {
+  const card = document.createElement("article");
+  card.className = "dump-card";
+  const cabecalho = document.createElement("div");
+  cabecalho.className = "dump-card-cabecalho";
+  const titulo = document.createElement("h2");
+  titulo.textContent = dump.nome;
+  cabecalho.append(titulo);
+  if (dump.data) {
+    const data = document.createElement("time");
+    data.textContent = dump.data;
+    cabecalho.append(data);
+  }
+  const meta = document.createElement("div");
+  meta.className = "dump-meta";
+  if (dump.maisRecente) meta.append(Object.assign(document.createElement("span"), { className: "selo latest", textContent: t("maisRecente") }));
+  if (dump.primeiro) meta.append(Object.assign(document.createElement("span"), { className: "selo first", textContent: t("primeiro") }));
+  const conteudo = document.createElement("div");
+  conteudo.className = "dump-card-acoes";
+  if (dump.bits.length) {
+    const legenda = document.createElement("span");
+    legenda.className = "bits-legenda";
+    legenda.textContent = t("bits") + ":";
+    conteudo.append(legenda);
+    for (const bit of dump.bits) {
+      const botao = document.createElement("button");
+      botao.className = "bit-botao";
+      botao.type = "button";
+      botao.textContent = String(bit);
+      botao.addEventListener("click", () => baixarArquivo(jogo, dump, bit));
+      conteudo.append(botao);
+    }
+  }
+  const baixar = document.createElement("button");
+  baixar.className = "btn";
+  baixar.type = "button";
+  baixar.textContent = t("baixarVersao");
+  baixar.addEventListener("click", () => baixarArquivo(jogo, dump));
+  conteudo.append(baixar);
+  card.append(cabecalho, meta, conteudo);
+  return card;
+}
+
+function mostrarDetalhe() {
+  const jogo = JOGOS.find(item => item.jogo === JOGO_DA_ROTA);
+  if (!jogo) { principalView.hidden = false; jogoView.hidden = true; return; }
+  principalView.hidden = true;
+  jogoView.hidden = false;
+  const dumps = [...jogo.versoes].sort(ORDEM === "novo" ? compararMaisRecente : (a, b) => compararMaisRecente(b, a));
+  jogoTitulo.textContent = jogo.display;
+  jogoResumo.textContent = `${dumps.length} ${dumps.length === 1 ? t("versao") : t("versoes")}`;
+  baixarTodosBotao.textContent = t("baixarTodos");
+  voltarBotao.textContent = "‹ " + t("voltar");
+  detalheNovo.textContent = t("maisNovos");
+  detalheAntigo.textContent = t("maisAntigos");
+  detalheNovo.classList.toggle("ativo", ORDEM === "novo");
+  detalheAntigo.classList.toggle("ativo", ORDEM === "antigo");
+  jogoDumps.replaceChildren(...dumps.map(dump => criarDumpDetalhe(jogo.jogo, dump)));
+  baixarTodosBotao.onclick = async () => {
+    const arquivos = dumps.flatMap(dump => dump.bits.length ? dump.bits.map(bit => [dump, bit]) : [[dump, null]]);
+    for (const [dump, bit] of arquivos) {
+      await baixarArquivo(jogo.jogo, dump, bit);
+      await new Promise(resolve => setTimeout(resolve, 180));
+    }
+  };
+}
+
 function mostrar() {
+  if (JOGO_DA_ROTA) { mostrarDetalhe(); return; }
+  principalView.hidden = false;
+  jogoView.hidden = true;
   const q = campo.value.trim().toLowerCase();
   const registros = [];
   for (const g of JOGOS) {
@@ -369,6 +474,9 @@ seletor.addEventListener("click", () => {
 ordemNovo.addEventListener("click", () => atualizarRota("novo"));
 ordemAntigo.addEventListener("click", () => atualizarRota("antigo"));
 window.addEventListener("hashchange", () => { lerRota(); mostrar(); });
+voltarBotao.addEventListener("click", () => { history.pushState(null, "", location.pathname + location.search); lerRota(); mostrar(); });
+detalheNovo.addEventListener("click", () => atualizarRota("novo"));
+detalheAntigo.addEventListener("click", () => atualizarRota("antigo"));
 
 const menuBotao = document.getElementById("menu-botao");
 menuBotao.addEventListener("click", () => {

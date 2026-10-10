@@ -234,3 +234,34 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   body::after, .hero::before { animation: none; opacity: .1; }
 }
+
+.jogo-view[hidden] { display: none; }
+.jogo-view { padding-top: 30px; }
+.voltar-botao { margin-bottom: 22px; padding: 8px 0; border: 0; background: transparent; color: var(--muted); font: inherit; font-weight: 750; cursor: pointer; }
+.voltar-botao:hover { color: var(--ink); }
+.jogo-hero { position: relative; margin-bottom: 22px; padding: 28px; overflow: hidden; border: 1px solid #303034; border-radius: 26px; background: linear-gradient(145deg, #171717, #111113); box-shadow: var(--shadow); }
+.jogo-kicker { color: var(--green); font-size: .8rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.jogo-hero h1 { margin: 12px 0 7px; }
+.jogo-hero .sub { margin-bottom: 20px; }
+.baixar-todos { padding: 11px 17px; border: 1px solid #d9d9dd; border-radius: 10px; background: #f0f0f2; color: #0b0b0c; font: inherit; font-weight: 850; cursor: pointer; }
+.baixar-todos:hover { background: #fff; }
+.jogo-ordem { width: fit-content; margin: 0 0 18px; }
+.jogo-dumps { display: grid; gap: 14px; }
+.dump-card { padding: 18px 20px; border: 1px solid #303034; border-radius: 18px; background: var(--surface); box-shadow: 0 14px 38px rgba(0,0,0,.25); }
+.dump-card-cabecalho { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.dump-card-cabecalho h2 { margin: 0; font-size: 1.08rem; }
+.dump-card-cabecalho time { color: var(--muted); font-size: .86rem; }
+.dump-meta { display: flex; gap: 6px; min-height: 25px; margin-top: 9px; }
+.dump-card-acoes { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.bits-legenda { color: var(--muted); font-size: .8rem; font-weight: 750; }
+.bit-botao { min-width: 44px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: #202024; color: var(--ink); font: inherit; font-weight: 800; cursor: pointer; }
+.bit-botao:hover { border-color: var(--accent); color: var(--accent); }
+
+@media (max-width: 560px) {
+  .jogo-view { padding-top: 24px; }
+  .jogo-hero { padding: 23px 20px; border-radius: 23px; }
+  .jogo-ordem { width: 100%; }
+  .dump-card { padding: 16px 17px; }
+  .dump-card-cabecalho { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .dump-card-acoes .btn { flex: 1; }
+}

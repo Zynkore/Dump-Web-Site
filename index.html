@@ -22,7 +22,7 @@
     </div>
   </header>
 
-  <main>
+  <main id="principal-view">
     <section class="hero">
       <h1 data-i18n="titulo">Dumps</h1>
       <p class="sub" data-i18n="sub">Arquivos organizados por jogo e versão.</p>
@@ -50,6 +50,21 @@
     <div id="vazio" class="vazio" data-i18n="vazio" hidden></div>
     <div id="erro" class="vazio" data-i18n="erro" hidden></div>
   </main>
+
+  <section id="jogo-view" class="jogo-view" hidden aria-labelledby="jogo-titulo">
+    <button id="voltar-botao" class="voltar-botao" type="button"></button>
+    <div class="jogo-hero">
+      <span class="jogo-kicker" data-i18n="jogoKicker">Dump list</span>
+      <h1 id="jogo-titulo"></h1>
+      <p id="jogo-resumo" class="sub"></p>
+      <button id="baixar-todos" class="baixar-todos" type="button"></button>
+    </div>
+    <div class="jogo-ordem ordem-controles">
+      <button id="detalhe-novo" class="ordem-botao ativo" type="button"></button>
+      <button id="detalhe-antigo" class="ordem-botao" type="button"></button>
+    </div>
+    <div id="jogo-dumps" class="jogo-dumps"></div>
+  </section>
 
   <footer>
     <p data-i18n="aviso"></p>
