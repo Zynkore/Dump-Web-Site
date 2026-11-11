@@ -7,14 +7,14 @@
         {
           "IsLatestDump": false,
           "IsFirstDump": true,
-          "date": "10/10/2026",
+          "date": "2026/10/10",
           "version": "v2026.9.29",
           "file": "2026.9.29"
         },
         {
           "IsLatestDump": true,
           "IsFirstDump": false,
-          "date": "11/11/2026",
+          "date": "2026/11/11",
           "version": "2026.11.3",
           "file": "2026.11.3"
         }
